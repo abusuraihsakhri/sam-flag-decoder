@@ -27,10 +27,14 @@ jobs:
         pip install fastapi uvicorn pydantic pytest
 
     - name: Run Pytest Suite
+      env:
+        AUDIT_SECRET_KEY: ci-test-audit-secret-key-2026
       run: |
         pytest -v
 
     - name: Security SAST & Zero-PHI Audit
+      env:
+        AUDIT_SECRET_KEY: ci-test-audit-secret-key-2026
       run: |
         python -c "
         from agents.base import PHIGuard, AuditLogger

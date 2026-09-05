@@ -3,8 +3,13 @@ Automated Pytest Test Suite for Sam Flag Decoder.
 Domain: Clinical & Biomedical AI
 Standard: CAP / CLSI / ISO Standards
 """
+import os
 import sys
 from pathlib import Path
+
+# Set audit secret key before importing agents that initialize the global audit logger
+os.environ.setdefault("AUDIT_SECRET_KEY", "test-audit-secret-key-for-ci-only")
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
