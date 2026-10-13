@@ -1,6 +1,6 @@
 import sam_flag as m, pathlib
 def test_lookup():
-    r=m.lookup('creatinine')
+    r=m.lookup('99')
     assert 'top_hit' in r and 'score' in r
     pdir=pathlib.Path(__file__).parent
     rows=m.process_csv(str(pdir/'sample.csv'), str(pdir/'tmp_test_out.csv'))
