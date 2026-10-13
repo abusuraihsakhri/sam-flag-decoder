@@ -25,7 +25,7 @@ PHI_PATTERNS = [
 
 
 class SecurityException(Exception):
-    """Raised when outbound data violates HIPAA Safe Harbor or contains raw PHI."""
+    """Raised when configured sensitive-identifier patterns match input."""
     pass
 
 
@@ -56,7 +56,7 @@ class PHIGuard:
 
 
 class AuditTrail:
-    """Cryptographic Tamper-Evident HMAC-SHA256 Audit Trail."""
+    """In-memory HMAC-SHA256 chained audit entries; no durable storage."""
     def __init__(self, secret_key: Optional[str] = None):
         resolved_key = secret_key or os.getenv("AUDIT_SECRET_KEY")
         if not resolved_key:
@@ -94,16 +94,19 @@ class AuditTrail:
 
     def verify_integrity(self) -> bool:
         with self._lock:
-            for index, entry in enumerate(self.logs):
-                prev = self.logs[index - 1]["current_hash"] if index else "GENESIS_BLOCK_0000000000000000"
-                if not hmac.compare_digest(entry["prev_hash"], prev):
-                    return False
-                sign_string = "|".join(str(entry[k]) for k in (
-                    "audit_id", "timestamp", "actor", "actor_tier", "event_type", "payload_hash", "prev_hash"
-                ))
-                expected = hmac.new(self.secret_key, sign_string.encode("utf-8"), hashlib.sha256).hexdigest()
-                if not hmac.compare_digest(entry["current_hash"], expected):
-                    return False
+            try:
+                for index, entry in enumerate(self.logs):
+                    prev = self.logs[index - 1]["current_hash"] if index else "GENESIS_BLOCK_0000000000000000"
+                    if not hmac.compare_digest(entry["prev_hash"], prev):
+                        return False
+                    sign_string = "|".join(str(entry[k]) for k in (
+                        "audit_id", "timestamp", "actor", "actor_tier", "event_type", "payload_hash", "prev_hash"
+                    ))
+                    expected = hmac.new(self.secret_key, sign_string.encode("utf-8"), hashlib.sha256).hexdigest()
+                    if not hmac.compare_digest(entry["current_hash"], expected):
+                        return False
+            except (KeyError, TypeError, ValueError):
+                return False
             return True
 
     def get_trail(self) -> List[Dict[str, Any]]:
