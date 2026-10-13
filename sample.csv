@@ -1,4 +1,4 @@
-query,name
-Q1,creatinine
-Q2,hemoglobin
-Q3,platelets
+read_id,FLAG
+read1,99
+read2,147
+read3,2064

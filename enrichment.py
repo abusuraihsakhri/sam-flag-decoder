@@ -43,15 +43,15 @@ class BaseEnrichmentEngine:
             alerts.append(
                 f"{self.FEATURE_NAME}: Primary value {primary_value:.2f} breached critical threshold ({self.threshold * 2:.2f})"
             )
-            recs.append("Initiate immediate protocol review and escalate to attending lead.")
+            recs.append("Review illustrative inputs and thresholds; do not use for clinical escalation.")
         elif primary_value > self.threshold:
             status = "WARNING"
             alerts.append(
                 f"{self.FEATURE_NAME}: Value {primary_value:.2f} exceeds baseline threshold ({self.threshold:.2f})"
             )
-            recs.append("Increase monitoring frequency and perform secondary verification.")
+            recs.append("Review input values and the configured demonstration threshold.")
         else:
-            recs.append("Parameters nominal under standard operating bounds.")
+            recs.append("Inputs do not exceed the illustrative threshold.")
 
         res = BaseEngineResult(
             feature_name=self.FEATURE_NAME,

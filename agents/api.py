@@ -1,8 +1,10 @@
 """
 FastAPI REST API Server for Sam Flag Decoder.
 """
+import os
+import hmac
 from typing import Dict, Any, List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from .base import AuditLogger, PHIGuard
 from .models import SystemTaskPayload, ConsensusDossier
@@ -12,7 +14,7 @@ supervisor = SystemSupervisor(model_provider="mock")
 
 app = FastAPI(
     title="Sam Flag Decoder API",
-    description="Enterprise Distributed Component Platform (Clinical & Biomedical AI)",
+    description="Legacy illustrative threshold/agent demonstration, not validated clinical guidance",
     version="3.0.0-ENTERPRISE",
 )
 
@@ -23,7 +25,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "HEALTHY", "service": "sam-flag-decoder", "domain": "Clinical & Biomedical AI", "standard": "CAP / CLSI / ISO Standards", "version": "3.0.0-ENTERPRISE"}
+    return {"status": "HEALTHY", "service": "sam-flag-decoder", "domain": "Illustrative threshold demonstration", "standard": "None (illustrative thresholds)", "version": "3.0.0-ENTERPRISE"}
 
 
 @app.get("/metrics")
@@ -51,5 +53,8 @@ def api_chat(req: ChatRequest):
 
 
 @app.get("/api/audit/logs")
-def api_audit_logs():
+def api_audit_logs(x_audit_read_key: str | None = Header(default=None)):
+    expected = os.environ.get("AUDIT_LOG_READ_KEY")
+    if not expected or not x_audit_read_key or not hmac.compare_digest(expected, x_audit_read_key):
+        raise HTTPException(status_code=403, detail="Audit log access disabled or unauthorized")
     return {"audit_trail": AuditLogger.get_trail(), "verified": AuditLogger.verify_integrity()}

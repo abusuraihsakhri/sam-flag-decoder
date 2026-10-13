@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Sam Flag Decoder API",
-    "description": "Enterprise Distributed Component Platform (Clinical & Cryptographic AI) adhering to CAP / CLSI / NIST Standards.",
+    "description": "Legacy illustrative threshold demonstration; not a validated clinical or cryptographic analysis system.",
     "version": "3.0.0-ENTERPRISE",
     "contact": {
       "name": "Dr. Abu Suraih Sakhri",
@@ -22,7 +22,7 @@
     },
     "/metrics": {
       "get": {
-        "summary": "Prometheus operational metrics",
+        "summary": "JSON operational counters",
         "responses": {
           "200": {
             "description": "Prometheus text metrics"
@@ -76,7 +76,7 @@
     },
     "/api/chat": {
       "post": {
-        "summary": "Air-gapped supervisory conversational assistant",
+        "summary": "Deterministic mock text response",
         "requestBody": {
           "content": {
             "application/json": {
@@ -106,7 +106,7 @@
         "summary": "Retrieve and cryptographically verify HMAC audit trail",
         "responses": {
           "200": {
-            "description": "Cryptographic audit trail"
+            "description": "In-memory HMAC audit trail"
           }
         }
       }
