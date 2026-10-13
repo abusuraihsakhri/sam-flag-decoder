@@ -16,7 +16,7 @@ class TestLookup:
     """Tests for the lookup() function."""
 
     def test_basic_lookup_returns_dict(self):
-        result = sam_flag.lookup("creatinine")
+        result = sam_flag.lookup("99")
         assert isinstance(result, dict)
         assert "top_hit" in result
         assert "score" in result
@@ -24,7 +24,7 @@ class TestLookup:
         assert "all" in result
 
     def test_lookup_returns_all_field(self):
-        result = sam_flag.lookup("hemoglobin")
+        result = sam_flag.lookup("147")
         assert len(result["all"]) > 0
 
     def test_lookup_empty_string(self):
@@ -36,13 +36,13 @@ class TestLookup:
         result = sam_flag.lookup(None)
         assert isinstance(result, dict)
 
-    def test_lookup_case_insensitive(self):
-        r1 = sam_flag.lookup("CREATININE")
-        r2 = sam_flag.lookup("creatinine")
+    def test_lookup_decimal_hex_equivalence(self):
+        r1 = sam_flag.lookup("0X63")
+        r2 = sam_flag.lookup("99")
         assert r1["top_hit"] == r2["top_hit"]
 
     def test_lookup_with_extra_param(self):
-        result = sam_flag.lookup("wbc", extra={"source": "lab"})
+        result = sam_flag.lookup("4", extra={"source": "lab"})
         assert isinstance(result, dict)
 
 
@@ -51,7 +51,7 @@ class TestProcessCsv:
 
     def test_process_csv_basic(self, tmp_path):
         input_csv = tmp_path / "input.csv"
-        input_csv.write_text("query,name\nQ1,creatinine\nQ2,hemoglobin\n", encoding="utf-8")
+        input_csv.write_text("query,name\nQ1,99\nQ2,147\n", encoding="utf-8")
         output_csv = tmp_path / "output.csv"
 
         results = sam_flag.process_csv(str(input_csv), str(output_csv))
@@ -72,7 +72,7 @@ class TestProcessCsv:
 
     def test_process_csv_creates_parent_dirs(self, tmp_path):
         input_csv = tmp_path / "input.csv"
-        input_csv.write_text("query\nQ1\n", encoding="utf-8")
+        input_csv.write_text("query\n99\n", encoding="utf-8")
         output_csv = tmp_path / "subdir" / "nested" / "output.csv"
 
         sam_flag.process_csv(str(input_csv), str(output_csv))
@@ -83,14 +83,14 @@ class TestBuildParser:
     """Tests for build_parser() and main()."""
 
     def test_single_command(self):
-        assert sam_flag.main(["single", "creatinine"]) == 0
+        assert sam_flag.main(["single", "99"]) == 0
 
     def test_single_with_flag_query(self):
-        assert sam_flag.main(["single", "--query", "hemoglobin"]) == 0
+        assert sam_flag.main(["single", "--query", "147"]) == 0
 
     def test_batch_command(self, tmp_path):
         input_csv = tmp_path / "input.csv"
-        input_csv.write_text("query\nQ1\n", encoding="utf-8")
+        input_csv.write_text("query\n99\n", encoding="utf-8")
         output_csv = tmp_path / "output.csv"
 
         result = sam_flag.main(["batch", "--input", str(input_csv), "--output", str(output_csv)])
