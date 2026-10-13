@@ -1,6 +1,6 @@
 """
 Supervisor Orchestrator & Operations Intelligence for Sam Flag Decoder.
-Domain: Clinical & Biomedical AI
+Domain: Illustrative threshold demonstration
 """
 import uuid
 import json
@@ -77,5 +77,5 @@ class SystemSupervisor:
 
     def query_supervisory_chat(self, query: str) -> str:
         PHIGuard.assert_no_phi(query)
-        prompt = f"Supervisor inquiry for Sam Flag Decoder under CAP / CLSI / ISO Standards: {query}"
+        prompt = f"Demonstration query for Sam Flag Decoder (no validated clinical inference): {query}"
         return self.llm.invoke(prompt)
