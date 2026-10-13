@@ -14,7 +14,7 @@ supervisor = SystemSupervisor(model_provider="mock")
 
 app = FastAPI(
     title="Sam Flag Decoder API",
-    description="Enterprise Distributed Component Platform (Clinical & Biomedical AI)",
+    description="Legacy illustrative threshold/agent demonstration, not validated clinical guidance",
     version="3.0.0-ENTERPRISE",
 )
 
@@ -25,7 +25,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "HEALTHY", "service": "sam-flag-decoder", "domain": "Clinical & Biomedical AI", "standard": "CAP / CLSI / ISO Standards", "version": "3.0.0-ENTERPRISE"}
+    return {"status": "HEALTHY", "service": "sam-flag-decoder", "domain": "Illustrative threshold demonstration", "standard": "None (illustrative thresholds)", "version": "3.0.0-ENTERPRISE"}
 
 
 @app.get("/metrics")
