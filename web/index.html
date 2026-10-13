@@ -1,236 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sam Flag Decoder — Operations Console</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #090d16;
-            --card: #111827;
-            --border: #1f293d;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.25);
-            --text: #f3f4f6;
-            --text-muted: #9ca3af;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 2rem;
-            min-height: 100vh;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .header-title h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
-        .header-title p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--accent-glow);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 1.5rem;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .card h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.65rem 0.9rem;
-            background: #0d1322;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.9rem;
-        }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
-        .btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 0.7rem 1.4rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-        }
-        .btn:hover { background: #2563eb; }
-        .terminal {
-            background: #060911;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #10b981;
-            height: 380px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        .metrics-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .metric-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .metric-val { font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 0.25rem; }
-        .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Decode SAM/BAM bitwise FLAG values and CSV tables in your browser.">
+  <meta name="theme-color" content="#101d32">
+  <title>SAM FLAG Decoder</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.55 system-ui, -apple-system, Segoe UI, sans-serif; background: #0d1525; color: #f2f6fd; }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 1080px; padding: clamp(1rem,3vw,2.5rem); }
+    header { border-bottom: 1px solid #324461; margin-bottom: 1.5rem; padding-bottom: 1rem; }
+    h1 { font-size: clamp(1.5rem,3vw,2rem); margin: 0; }
+    h2 { font-size: 1.18rem; margin: 0 0 .8rem; }
+    p { margin: .4rem 0 .8rem; }
+    .muted, .meta { color: #b2c5df; }
+    .meta { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    .columns { display: grid; grid-template-columns: minmax(280px, .92fr) minmax(300px, 1.1fr); gap: 1rem; }
+    .panel { border: 1px solid #324461; background: #162238; border-radius: 12px; padding: 1.35rem; min-width: 0; }
+    .wide { margin-top: 1rem; }
+    label { font-weight: 600; display: block; margin-bottom: .45rem; }
+    input[type=text], textarea, input[type=file] { background: #0c172a; border: 1px solid #667b98; color: white; padding: .7rem; border-radius: 7px; width: 100%; font: inherit; }
+    textarea { font-family: ui-monospace, Consolas, monospace; font-size: .86rem; resize: vertical; min-height: 125px; }
+    button { font: inherit; padding: .56rem .9rem; border: 1px solid #6482aa; border-radius: 7px; background: #253b5a; color: white; cursor: pointer; }
+    button.primary { background: #2769d7; border-color: #5997ff; font-weight: 650; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    button:hover:not(:disabled) { filter: brightness(1.18); }
+    :focus-visible { outline: 3px solid #f5be60; outline-offset: 2px; }
+    .actions { display: flex; gap: .55rem; flex-wrap: wrap; margin-top: .7rem; }
+    .flag-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+    .flag-list li { border-top: 1px solid #314462; padding: .5rem 0; }
+    code { color: #afd4ff; font-family: ui-monospace, Consolas, monospace; }
+    .summary { font-weight: 650; }
+    .error { color: #ffb2b2; font-weight: 650; }
+    .warning-list { border-left: 3px solid #f1b851; padding-left: 1.4rem; color: #ffe0a3; }
+    .scroll { max-width: 100%; overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin-top: .7rem; font-size: .86rem; }
+    th, td { padding: .56rem .7rem; border-bottom: 1px solid #324461; text-align: left; vertical-align: top; }
+    th { color: #cee2ff; }
+    footer { color: #b2c5df; margin-top: 1.7rem; font-size: .86rem; }
+    a { color: #a8d0ff; }
+    @media(max-width:750px) { .columns { grid-template-columns: 1fr; } .panel { padding: 1rem; } }
+  </style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="header-title">
-            <h1>Sam Flag Decoder</h1>
-            <p>Domain: Clinical & Cryptographic AI | Standard: CAP / CLSI / NIST Standards | LabMind-Atlas Architecture</p>
+  <header>
+    <h1>SAM FLAG Decoder</h1>
+    <p class="muted">Interpret Sequence Alignment/Map bitwise FLAG values · Decimal or hexadecimal · Runs locally in your browser</p>
+  </header>
+  <main>
+    <div class="columns">
+      <section class="panel" aria-labelledby="single-heading">
+        <h2 id="single-heading">Single FLAG</h2>
+        <form id="decode-form">
+          <label for="flag-input">FLAG (0–65535)</label>
+          <input id="flag-input" name="flag" type="text" inputmode="text" value="99" maxlength="30" required aria-describedby="flag-help">
+          <p id="flag-help" class="muted">Examples: 99, 147, 0x63, 2064</p>
+          <button class="primary" type="submit">Decode FLAG</button>
+        </form>
+        <p class="muted">Try an example:</p>
+        <div class="actions" aria-label="Example FLAG values">
+          <button type="button" data-flag="0">0</button>
+          <button type="button" data-flag="99">99</button>
+          <button type="button" data-flag="147">147</button>
+          <button type="button" data-flag="4">4</button>
+          <button type="button" data-flag="2064">2064</button>
         </div>
-        <div>
-            <span class="badge">Air-Gapped Active</span>
-            <span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border-color: #10b981;">Zero-PHI Guard Active</span>
-        </div>
+      </section>
+      <section class="panel" aria-labelledby="decoded-heading">
+        <h2 id="decoded-heading">Interpretation</h2>
+        <div id="result" aria-live="polite"></div>
+      </section>
     </div>
-
-    <div class="metrics-bar">
-        <div class="metric-box">
-            <div class="metric-label">System Status</div>
-            <div class="metric-val" style="color: var(--success);" id="m-status">OPTIMAL</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">Tasks Processed</div>
-            <div class="metric-val" id="m-tasks">142</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">Audit Blocks Signed</div>
-            <div class="metric-val" id="m-audit">142</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">PHI Interceptions</div>
-            <div class="metric-val" style="color: var(--accent);" id="m-phi">0</div>
-        </div>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <h2>⚙️ Dispatch Distributed Component Audit</h2>
-            <div class="form-group">
-                <label>Task / Sample ID</label>
-                <input type="text" id="task_id" value="TASK-2026-LIVE-01">
-            </div>
-            <div class="form-group">
-                <label>Target Identifier</label>
-                <input type="text" id="target_id" value="SPECIMEN-ALPHA-77">
-            </div>
-            <div class="form-group">
-                <label>Primary Measurement / Value</label>
-                <input type="number" id="primary_metric" value="29.4" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Secondary Metric / Kinetic Index</label>
-                <input type="number" id="secondary_metric" value="14.8" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Status / Phenotype Descriptor</label>
-                <input type="text" id="status_descriptor" value="DISCORDANT_ANOMALY">
-            </div>
-            <div class="form-group">
-                <label><input type="checkbox" id="is_critical" checked> Trigger Emergency / Critical Flag</label>
-            </div>
-            <button class="btn" onclick="runAudit()">Execute Distributed Component Audit</button>
-        </div>
-
-        <div class="card">
-            <h2>📊 Real-Time Consensus Dossier & Audit Log</h2>
-            <div class="terminal" id="outputConsole">// Sam Flag Decoder Operations Console Ready
-// Connection established with Air-Gapped Supervisor
-// Cryptographic HMAC-SHA256 audit ledger loaded.
-// Ready for live task payload dispatch...</div>
-        </div>
-    </div>
-
-    <script>
-        async function runAudit() {
-            const consoleEl = document.getElementById('outputConsole');
-            consoleEl.innerText = "// Dispatching task across specialized workers...
-// Invoking InvariantQCWorker, SafetyEscalationWorker, ProtocolWorker...";
-
-            const payload = {
-                task_id: document.getElementById('task_id').value,
-                target_identifier: document.getElementById('target_id').value,
-                primary_metric: parseFloat(document.getElementById('primary_metric').value),
-                secondary_metric: parseFloat(document.getElementById('secondary_metric').value),
-                status_descriptor: document.getElementById('status_descriptor').value,
-                is_critical_flag: document.getElementById('is_critical').checked
-            };
-
-            try {
-                const res = await fetch('/api/audit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                consoleEl.innerText = JSON.stringify(data, null, 2);
-                document.getElementById('m-tasks').innerText = parseInt(document.getElementById('m-tasks').innerText) + 1;
-                document.getElementById('m-audit').innerText = parseInt(document.getElementById('m-audit').innerText) + 1;
-            } catch (err) {
-                consoleEl.innerText = "// Offline / Simulation Output:\n" + JSON.stringify({
-                    dossier_id: "DOSSIER-SIM-" + Math.floor(Math.random()*10000),
-                    system: "sam-flag-decoder",
-                    domain: "Clinical & Cryptographic AI",
-                    task_id: payload.task_id,
-                    overall_urgency: payload.is_critical_flag ? "CRITICAL_STAT_PANIC" : "ELEVATED_RISK",
-                    integrity_status: "DISCORDANT_ANOMALY",
-                    alerts: [
-                        { worker: "InvariantQCWorker", alert: "Primary metric exceeds upper reference bound" },
-                        { worker: "SafetyEscalationWorker", alert: "Critical emergency interlock flag active" }
-                    ],
-                    audit_hash: "HMAC_SHA256_e83f9a72b941d6c381f9"
-                }, null, 2);
-            }
-        }
-    </script>
+    <section class="panel wide" aria-labelledby="csv-heading">
+      <h2 id="csv-heading">Batch CSV decoder</h2>
+      <p class="muted">CSV must include a <code>FLAG</code>, <code>sam_flag</code>, or <code>query</code> header. Input stays on this device. Maximum 50,000 data rows or 2 MiB uploaded file.</p>
+      <label for="upload">Select CSV file (optional)</label>
+      <input id="upload" type="file" accept=".csv,text/csv">
+      <label for="csv-data" style="margin-top:1rem">CSV data</label>
+      <textarea id="csv-data" spellcheck="false">read_id,FLAG
+read1,99
+read2,147
+read3,2064</textarea>
+      <div class="actions">
+        <button id="batch-btn" class="primary" type="button">Decode CSV</button>
+        <button id="export-btn" type="button" disabled>Download results CSV</button>
+      </div>
+      <p id="batch-status" class="muted" role="status" aria-live="polite"></p>
+      <div class="scroll">
+        <table aria-label="Decoded CSV preview"><thead><tr><th>Decimal</th><th>Hex</th><th>Flags</th><th>Error</th></tr></thead><tbody id="batch-preview"></tbody></table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Based on the <a href="https://github.com/samtools/hts-specs" rel="noopener noreferrer">SAM/BAM specification</a>. Reserved bits are reported but not interpreted. A FLAG alone cannot validate the remainder of a SAM record or a mate pair. No uploads, external APIs, cookies or analytics are used.
+  </footer>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
